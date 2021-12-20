@@ -24,7 +24,7 @@ func main() {
 	productos = append(productos, p1, p2, p3, p4)
 
 
-	csvFile, err := os.Create("employee.csv")
+	csvFile, err := os.Create("products.csv")
 
 	if err != nil {
 		fmt.Print("Error: ", err)
