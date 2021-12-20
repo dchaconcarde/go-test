@@ -30,7 +30,7 @@ func main() {
 		fmt.Print("Error: ", err)
 	}
 	productsTitle:=[]string{}
-	productTitle:=fmt.Sprint("ID, Precio, Cantidad;")
+	productTitle:=fmt.Sprint("ID,\t Precio,\t Cantidad;")
 	productsTitle = append(productsTitle,productTitle)
 	csvwriter := csv.NewWriter(csvFile)
 
@@ -40,7 +40,7 @@ func main() {
  
 	for _, producto := range productos {
 		productToPrint := []string{}
-		toPrint:=fmt.Sprintf("%d, %10.2f, %d ;", producto.Id, producto.Precio, producto.Cantidad)
+		toPrint:=fmt.Sprintf("%d,\t %10.2f,\t %d ;", producto.Id, producto.Precio, producto.Cantidad)
 		productToPrint = append(productToPrint, toPrint)
 	_ = csvwriter.Write(productToPrint)
 		fmt.Println(toPrint)
