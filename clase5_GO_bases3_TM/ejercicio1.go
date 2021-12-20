@@ -30,7 +30,7 @@ func main() {
 		fmt.Print("Error: ", err)
 	}
 	productsTitle:=[]string{}
-	productTitle:=fmt.Sprint("ID,\t Precio,\t Cantidad;")
+	productId:=fmt.Sprint("ID,\t Precio,\t Cantidad;")
 	productsTitle = append(productsTitle,productTitle)
 	csvwriter := csv.NewWriter(csvFile)
 
