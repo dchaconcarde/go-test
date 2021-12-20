@@ -41,7 +41,7 @@ func printMatrix(ma *matrix.DenseMatrix) float64 {
 			if a>maxValue{
 				maxValue = a
 			}
-			print("|",int(a), " ")
+			print(" | ",int(a), " ")
 		}
 		fmt.Println("|")
 	}
