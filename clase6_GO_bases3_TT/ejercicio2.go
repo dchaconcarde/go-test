@@ -36,15 +36,13 @@ func main() {
 	
 	agregarProducto(user2, arroz, 10)
 
-	fmt.Printf("Nombre: %s \n",user.Nombre)
-	fmt.Printf("Apellido: %s \n", user.Apellido)
-	fmt.Printf("Correo: %s\n", user.Correo)
-	fmt.Println("Productos: ", user.Productos, "\n\n")
+	imprimirUsuario(user)
 
-	fmt.Printf("Nombre: %s \n",user2.Nombre)
-	fmt.Printf("Apellido: %s \n", user2.Apellido)
-	fmt.Printf("Correo: %s\n", user2.Correo)
-	fmt.Println("Productos: ", user2.Productos)
+	imprimirUsuario(user2)
+
+	borrarProductos(user)
+	imprimirUsuario(user)
+	
 	
 
 }
@@ -76,6 +74,18 @@ func agregarProducto(user *Usuario, producto Productos, cantidad int){
 	user.Productos =append(user.Productos, producto)
 }
 
-func borrarProductos(user Usuario){
+func borrarProductos(user *Usuario){
 	user.Productos = nil
+	fmt.Printf("Se borraron los productos de %s\n\n", user.Nombre)
+}
+
+func imprimirUsuario(user *Usuario){
+	fmt.Printf("Nombre: %s \n",user.Nombre)
+	fmt.Printf("Apellido: %s \n", user.Apellido)
+	fmt.Printf("Correo: %s\n", user.Correo)
+	if len(user.Productos) > 0 {
+		fmt.Println("Productos: ", user.Productos, "\n\n")
+	} else{
+		fmt.Println("No hay productos para este usuario")
+	}
 }
