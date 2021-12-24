@@ -1,4 +1,5 @@
 package main
+
 import (
 	"fmt"
 	"math"
@@ -18,89 +19,73 @@ func main() {
 	instalacion := Servicios{"Instalacion", 150.00, 40}
 	reparacion := Servicios{"Reparacion", 120.00, 120}
 
-	servicios = append(servicios,instalacion, reparacion)
+	servicios = append(servicios, instalacion, reparacion)
 
 	mantenimientoGeneral := Mantenimiento{"MantenimientoGeneral", 200.00}
 	superMantenimientoGeneral := Mantenimiento{"SuperMantenimientoGeneral", 800.00}
 
 	mantenimiento = append(mantenimiento, mantenimientoGeneral, superMantenimientoGeneral)
 
-	channel1 := make(chan int)
-	channel2 := make(chan int)
-	channel3 := make(chan int)
+	totalProductos := <-sumarProductos(producto)
+	totalServicios := <-sumarServicios(servicios)
+	totalMantenimientos := <-sumarMantenimiento(mantenimiento)
 
-	var sumaProductos float64
-	var sumaServicios float64
-	var sumaMantenimiento float64
+	fmt.Println("El total de precio de productos es :", totalProductos)
+	fmt.Println("El total de precio de servicios es :", totalServicios)
+	fmt.Println("El total de precio de mantenimiento es :", totalMantenimientos)
 
-	go func() <-chan int{
-		sumaProductos = sumarProductos(producto)
-		return channel1
-	}()
-	
-	go func() <-chan int{
-		sumaServicios = sumarServicios(servicios)
-		return channel2
-	}()
-
-	go func() <-chan int{
-		sumaMantenimiento = sumarMantenimiento(mantenimiento)
-		return channel2
-	}()
-
-	fmt.Println("El total de precio de productos es :", sumaProductos)
-	fmt.Println("El total de precio de servicios es :", sumaServicios)
-	fmt.Println("El total de precio de mantenimiento es :", sumaMantenimiento)
-
-	variable1 := <- channel1
-	variable2 := <- channel2
-	variable3 := <- channel3
-
-	fmt.Println("Terminó: ",variable1, variable2, variable3)
-	
-
+	fmt.Println("Finalizo el programa")
 
 }
 
-func sumarProductos(productos []Productos) float64{
+func sumarProductos(productos []Productos) <-chan float64 {
+	channel1 := make(chan float64)
 	total := 0.0
-	for _, p := range productos {
-		totalPorProducto := p.Precio * float64(p.Cantidad)
-		total+=totalPorProducto
-	}
-	return total
-}
-	 
-
-
-
-func sumarServicios(servicios []Servicios) float64 {
-	total := 0.0
-	for _, s := range servicios {
-		halfHour := float64(s.MinutosTrabajados/30)
-		var rounded int = int(math.Ceil(halfHour))
-		total += s.Precio * float64(rounded)
-	}
-	return total
+	go func() {
+		for _, p := range productos {
+			totalPorProducto := p.Precio * float64(p.Cantidad)
+			total += totalPorProducto
+		}
+		channel1 <- total
+	}()
+	return channel1
 }
 
-func sumarMantenimiento(mantenimiento []Mantenimiento) float64 {
+func sumarServicios(servicios []Servicios) <-chan float64 {
+	channel2 := make(chan float64)
 	total := 0.0
-	for _, m := range mantenimiento{
-		total+=m.Precio
-	}
-	return total
+	go func() {
+		for _, s := range servicios {
+			halfHour := float64(s.MinutosTrabajados / 30)
+			var rounded int = int(math.Ceil(halfHour))
+			total += s.Precio * float64(rounded)
+		}
+		channel2 <- total
+	}()
+	return channel2
+}
+
+func sumarMantenimiento(mantenimiento []Mantenimiento) <-chan float64 {
+	channel3 := make(chan float64)
+	total := 0.0
+	go func() {
+		for _, m := range mantenimiento {
+			total += m.Precio
+		}
+		channel3 <- total
+	}()
+	return channel3
 }
 
 type Productos struct {
-	Nombre string
-	Precio float64
+	Nombre   string
+	Precio   float64
 	Cantidad int
 }
 
 type Servicios struct {
-	Nombre string
-	Precio float64
+	Nombre            string
+	Precio            float64
 	MinutosTrabajados int
 }
 
